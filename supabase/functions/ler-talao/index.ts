@@ -30,7 +30,7 @@ function chavePublica(): string {
 }
 
 const INSTRUCOES = [
-  "És um leitor rigoroso de talões e faturas portuguesas. Lê as imagens e regista o documento com a ferramenta registar_talao.",
+  "És um leitor rigoroso de talões e faturas portuguesas. Lê as imagens e regista o documento chamando sempre a ferramenta registar_talao, uma única vez, sem escrever texto antes ou depois.",
   "Regras:",
   "- Valores em euros tal como impressos, com ponto decimal.",
   "- Cada artigo é uma linha. Um desconto ou promoção (valor negativo) que se aplica ao artigo anterior é subtraído ao valor desse artigo, sem criar outra linha. Se não for claro a que artigo pertence, cria uma linha negativa com a categoria do artigo anterior.",
@@ -135,10 +135,10 @@ Deno.serve(async (req) => {
     },
     body: JSON.stringify({
       model: MODELO,
-      max_tokens: 6000,
+      max_tokens: 12000,
       system: INSTRUCOES,
       tools: [FERRAMENTA],
-      tool_choice: { type: "tool", name: "registar_talao" },
+      tool_choice: { type: "auto" },
       messages: [{ role: "user", content: conteudo }],
     }),
   });
