@@ -200,9 +200,10 @@
     render(
       '<main class="ecra"><header class="topo"><span class="logo">escudo.</span>' +
       '<button class="redondo" id="bMenu" aria-label="Menu" aria-expanded="false">' + ICON.menu + '</button></header>' +
-      '<nav class="menu" id="menu" hidden aria-label="Menu"><button id="mPerfil">O meu perfil</button><a href="../sugestoes.html?pagina=app">Enviar sugestões</a><button id="mSair">Sair</button></nav>' +
+      '<nav class="menu" id="menu" hidden aria-label="Menu"><button id="mPerfil">O meu perfil</button><button id="mTelemovel">Continuar no telemóvel</button><a href="../sugestoes.html?pagina=app">Enviar sugestões</a><button id="mSair">Sair</button></nav>' +
       '<div class="conteudo">' +
       (estado.aviso ? '<p class="msg ' + estado.aviso.tipo + '" role="status">' + esc(estado.aviso.texto) + '</p>' : '') +
+      (!toque() ? '<div class="cinza"><strong style="color:var(--obsidian)">Está no computador.</strong><span>Para fotografar talões, passe a sessão para o telemóvel com um código QR.</span><button class="btn btn-lima" id="bTelemovel">Continuar no telemóvel</button></div>' : '') +
       (!estado.testador ? '<p class="msg aviso">A leitura de talões está reservada aos testadores. Peça acesso ao Diogo.</p>' : '') +
       '<div class="mes"><button class="redondo" id="bAnt" aria-label="Mês anterior">' + ICON.esq + '</button><strong>' + esc(nomeMes(estado.mes).replace(/^./, function (c) { return c.toUpperCase(); })) + '</strong>' +
       '<button class="redondo" id="bSeg" aria-label="Mês seguinte"' + (eHoje ? ' disabled style="opacity:.35"' : '') + '>' + ICON.dir + '</button></div>' +
@@ -222,6 +223,7 @@
     estado.aviso = null;
     on('#bMenu', 'click', function () { var m = app.querySelector('#menu'); m.hidden = !m.hidden; this.setAttribute('aria-expanded', String(!m.hidden)); });
     on('#mPerfil', 'click', function () { ecraPerfil(false); });
+    on('#mTelemovel, #bTelemovel', 'click', ecraTelemovel);
     on('#mSair', 'click', function () { sb.auth.signOut().then(function () { estado.user = null; ecraEntrar(); }); });
     on('#bAnt', 'click', function () { estado.mes = somarMes(estado.mes, -1); ecraInicio(); });
     on('#bSeg', 'click', function () { if (!eHoje) { estado.mes = somarMes(estado.mes, 1); ecraInicio(); } });
@@ -516,6 +518,45 @@
     });
   }
 
+  /* ---------- passar a sessão para o telemóvel ---------- */
+  var CHAVE_SESSAO = 'sb-wviluzhxzxlnoyiubkgg-auth-token';
+  function toque() { return window.matchMedia && window.matchMedia('(pointer: coarse)').matches; }
+
+  function ecraTelemovel() {
+    sb.auth.getSession().then(function (r) {
+      var s = r.data && r.data.session;
+      if (!s) { ecraEntrar(); return; }
+      var guardada = { access_token: s.access_token, refresh_token: s.refresh_token };
+      // O computador larga a sessão já, para não gastar o código antes do telemóvel
+      sb.auth.stopAutoRefresh();
+      try { localStorage.removeItem(CHAVE_SESSAO); } catch (e) {}
+      var q = qrcode(0, 'M');
+      q.addData(APP_URL + '#passar=' + encodeURIComponent(s.refresh_token));
+      q.make();
+      render(
+        '<main class="ecra"><header class="topo"><span class="logo">escudo.</span></header><div class="conteudo">' +
+        '<h1>Continuar no telemóvel</h1>' +
+        '<ol style="margin:0;padding-left:20px;line-height:1.6"><li>Abra a câmara do telemóvel e aponte para este código.</li><li>Toque no link que aparece. A app abre já com a sua conta.</li><li>No telemóvel, use o botão “Partilhar” do navegador e “Adicionar ao ecrã principal”, para a ter à mão.</li></ol>' +
+        '<div style="background:#fff;border:1px solid var(--fog);border-radius:10px;padding:16px;max-width:320px;width:100%;align-self:center">' + q.createSvgTag({ cellSize: 6, margin: 2, scalable: true }) + '</div>' +
+        '<p class="peq">O código só funciona uma vez. Não o partilhe: quem o ler entra na sua conta. Depois de o usar, este computador sai da app.</p>' +
+        '<button class="btn btn-lima largo" id="bFeito">Já está no telemóvel</button>' +
+        '<button class="btn-texto" id="bCancelar" style="align-self:center">Cancelar e ficar no computador</button>' +
+        '</div></main>'
+      );
+      on('#bFeito', 'click', function () {
+        estado.user = null;
+        ecraEntrar({ tipo: 'ok', html: 'Sessão passada para o telemóvel. Para voltar a usar o computador, peça um novo link.' });
+      });
+      on('#bCancelar', 'click', function () {
+        sb.auth.setSession(guardada).then(function (r2) {
+          sb.auth.startAutoRefresh();
+          if (r2.error) { estado.user = null; ecraEntrar({ tipo: 'aviso', html: 'O código já foi usado. Para usar o computador, peça um novo link.' }); return; }
+          ecraInicio();
+        });
+      });
+    });
+  }
+
   /* ---------- arranque ---------- */
   function arrancar(session) {
     estado.user = session.user;
@@ -536,8 +577,16 @@
     if (evento === 'SIGNED_IN' && sessao && !estado.user) arrancar(sessao);
     if (evento === 'SIGNED_OUT') { estado.user = null; }
   });
-  sb.auth.getSession().then(function (r) {
+  var passar = /[#&]passar=([^&]+)/.exec(location.hash);
+  var inicio = passar
+    ? (history.replaceState(null, '', APP_URL), ecraCarregar('A entrar…'), sb.auth.refreshSession({ refresh_token: decodeURIComponent(passar[1]) }).then(function (r) {
+        if (r.error || !r.data.session) return { data: { session: null }, falhou: true };
+        return { data: { session: r.data.session } };
+      }))
+    : sb.auth.getSession();
+  inicio.then(function (r) {
     var s = r.data && r.data.session;
+    if (r.falhou) { ecraEntrar({ tipo: 'aviso', html: 'Este código já foi usado ou expirou. No computador, gere um novo em “Continuar no telemóvel”.' }); return; }
     if (s) { if (!estado.user) arrancar(s); return; }
     if (erroLink) {
       history.replaceState(null, '', APP_URL);
