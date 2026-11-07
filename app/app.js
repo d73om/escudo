@@ -54,6 +54,7 @@
   function render(html, manterScroll) {
     var y = window.scrollY;
     app.innerHTML = html;
+    document.body.classList.toggle('fundo-escuro', html.indexOf('ecra boas') > -1);
     window.scrollTo(0, manterScroll ? y : 0);
     var t = app.querySelector('[data-foco]'); if (t) t.focus();
   }
@@ -73,9 +74,28 @@
   }
 
   /* ---------- entrada ---------- */
+  function ecraBoasVindas() {
+    var exemplo = [['Leite meio-gordo', '1,58 €', 'alimentacao'], ['Lixívia Neoblanc', '1,29 €', 'limpeza'], ['Pasta de dentes', '1,63 €', 'higiene']];
+    render(
+      '<main class="ecra boas"><header class="topo"><span class="logo">escudo.</span><span class="selo">Fase de testes</span></header>' +
+      '<div class="conteudo">' +
+      '<h1>O seu dinheiro, às claras.</h1>' +
+      '<p class="lead">Fotografe o talão. A escudo lê cada artigo, mostra para onde vai o dinheiro e quanto fica para o Estado.</p>' +
+      '<div class="demo" aria-hidden="true"><div class="demo-topo"><strong>Lidl</strong><span>4,50 €</span></div>' +
+      exemplo.map(function (e) { return '<div class="demo-linha"><span>' + e[0] + '</span><span class="tag" style="background:' + CATS[e[2]][1] + ';color:' + (e[2] === 'higiene' ? 'var(--forest)' : '#fff') + '">' + CATS[e[2]][0].split(' ')[0] + '</span><b>' + e[1] + '</b></div>'; }).join('') +
+      '<div class="demo-iva"><span>Para o Estado em IVA</span><b>0,64 €</b></div></div>' +
+      '<ol class="passos"><li><span><b>Fotografe</b> o talão ou a fatura.</span></li><li><span><b>Confirme</b> as categorias que a app sugere.</span></li><li><span><b>Envie</b> a pasta do mês ao contabilista.</span></li></ol>' +
+      '</div>' +
+      '<footer class="rodape"><button class="btn btn-lima largo" id="bIrEntrar">Entrar</button>' +
+      '<p class="peq">Por convite, nesta fase. <a href="../privacidade.html">Privacidade</a> · <a href="../">Sobre a escudo</a></p></footer>' +
+      '</main>'
+    );
+    on('#bIrEntrar', 'click', function () { ecraEntrar(); });
+  }
+
   function ecraEntrar(mensagem) {
     render(
-      '<main class="ecra"><header class="topo"><a class="logo" href="../">escudo.</a></header>' +
+      '<main class="ecra"><header class="topo"><button class="redondo" id="bVoltarBV" aria-label="Voltar">' + ICON.voltar + '</button><span class="logo">escudo.</span><span style="width:44px"></span></header>' +
       '<div class="conteudo">' +
       '<h1>Entrar</h1>' +
       '<p>Escreva o seu email. Enviamos um link para entrar, sem palavra-passe.</p>' +
@@ -87,6 +107,7 @@
       '<p class="peq">Fase de testes. Saiba como tratamos os dados no <a href="../privacidade.html">aviso de privacidade</a>.</p>' +
       '</div></main>'
     );
+    on('#bVoltarBV', 'click', ecraBoasVindas);
     on('#fEntrar', 'submit', function (ev) {
       ev.preventDefault();
       var email = app.querySelector('#email').value.trim().toLowerCase();
@@ -95,7 +116,7 @@
       sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: APP_URL, shouldCreateUser: true } }).then(function (r) {
         if (r.error) {
           var limite = /rate|limit|seconds/i.test(r.error.message || '');
-          ecraEntrar({ tipo: 'aviso', html: limite ? 'Foram pedidos muitos links seguidos. Espere alguns minutos e tente de novo.' : 'Não foi possível enviar o link. Tente de novo daqui a pouco.' });
+          ecraEntrar({ tipo: 'aviso', html: limite ? '<strong>Já foram enviados os links possíveis nesta hora.</strong> Nesta fase de testes o servidor de email só envia 2 por hora. Tente daqui a uma hora ou, se tiver a app aberta no computador, use lá “Continuar no telemóvel”.' : 'Não foi possível enviar o link. Tente de novo daqui a pouco.' });
           return;
         }
         ecraEntrar({ tipo: 'ok', html: '<strong>Enviámos um link para ' + esc(email) + '.</strong> Abra-o neste telemóvel. Pode demorar um minuto; veja também o spam.' });
@@ -224,7 +245,7 @@
     on('#bMenu', 'click', function () { var m = app.querySelector('#menu'); m.hidden = !m.hidden; this.setAttribute('aria-expanded', String(!m.hidden)); });
     on('#mPerfil', 'click', function () { ecraPerfil(false); });
     on('#mTelemovel, #bTelemovel', 'click', ecraTelemovel);
-    on('#mSair', 'click', function () { sb.auth.signOut().then(function () { estado.user = null; ecraEntrar(); }); });
+    on('#mSair', 'click', function () { sb.auth.signOut().then(function () { estado.user = null; ecraBoasVindas(); }); });
     on('#bAnt', 'click', function () { estado.mes = somarMes(estado.mes, -1); ecraInicio(); });
     on('#bSeg', 'click', function () { if (!eHoje) { estado.mes = somarMes(estado.mes, 1); ecraInicio(); } });
     on('[data-filtro]', 'click', function () { estado.filtro = this.getAttribute('data-filtro'); desenharInicio(); });
@@ -525,7 +546,7 @@
   function ecraTelemovel() {
     sb.auth.getSession().then(function (r) {
       var s = r.data && r.data.session;
-      if (!s) { ecraEntrar(); return; }
+      if (!s) { ecraBoasVindas(); return; }
       var guardada = { access_token: s.access_token, refresh_token: s.refresh_token };
       // O computador larga a sessão já, para não gastar o código antes do telemóvel
       sb.auth.stopAutoRefresh();
@@ -593,6 +614,6 @@
       ecraEntrar({ tipo: 'aviso', html: 'O link de entrada expirou ou já foi usado. Peça um novo.' });
       return;
     }
-    ecraEntrar();
+    ecraBoasVindas();
   });
 })();

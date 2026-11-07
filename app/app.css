@@ -77,3 +77,23 @@ p{margin:0;line-height:1.5}
 .menu{position:absolute;right:20px;top:calc(64px + env(safe-area-inset-top));background:var(--paper);border-radius:10px;box-shadow:rgba(0,0,0,.15) 0 10px 32px 0;padding:6px;display:flex;flex-direction:column;min-width:200px;z-index:5}
 .menu button,.menu a{display:block;text-align:left;padding:12px 14px;border:none;background:none;border-radius:8px;font-size:15px;color:var(--obsidian);text-decoration:none}
 .menu button:hover,.menu a:hover{background:var(--fog)}
+
+/* Boas-vindas */
+body.fundo-escuro{background:var(--forest)}
+.boas{color:var(--linen)}
+.boas .logo{color:var(--lime)}
+.boas .selo{font-size:12px;font-weight:600;padding:4px 12px;border-radius:9999px;border:1px solid rgba(159,232,112,.5);color:var(--lime)}
+.boas h1{color:var(--lime);font-size:clamp(48px,13.5vw,76px);line-height:.88;margin-top:12px}
+.boas .lead{font-size:18px;line-height:1.45;color:var(--linen)}
+.boas .demo{background:var(--paper);border-radius:28px;padding:18px 20px;color:var(--charcoal);display:flex;flex-direction:column;gap:10px;transform:rotate(-1.5deg);box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.boas .demo-topo{display:flex;justify-content:space-between;font-size:16px;color:var(--obsidian);padding-bottom:6px;border-bottom:1px dashed var(--fog)}
+.boas .demo-linha{display:flex;align-items:center;gap:8px;font-size:14px}
+.boas .demo-linha span:first-child{flex:1}
+.boas .demo-linha b{color:var(--obsidian);min-width:52px;text-align:right}
+.boas .demo-iva{display:flex;justify-content:space-between;background:var(--linen);color:var(--forest);border-radius:10px;padding:8px 12px;font-size:14px}
+.boas .passos{margin:0;padding:0;list-style:none;counter-reset:p;display:flex;flex-direction:column;gap:12px}
+.boas .passos li{counter-increment:p;display:flex;gap:12px;align-items:center;font-size:16px}
+.boas .passos li::before{content:counter(p);flex-shrink:0;width:30px;height:30px;border-radius:9999px;background:var(--lime);color:var(--forest);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.boas .passos b{color:var(--paper)}
+.boas .rodape{background:var(--forest);border-top:1px solid rgba(226,246,213,.15);text-align:center}
+.boas .rodape .peq,.boas .rodape a{color:var(--linen)}
