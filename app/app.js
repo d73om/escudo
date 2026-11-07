@@ -200,7 +200,7 @@
     render(
       '<main class="ecra"><header class="topo"><span class="logo">escudo.</span>' +
       '<button class="redondo" id="bMenu" aria-label="Menu" aria-expanded="false">' + ICON.menu + '</button></header>' +
-      '<nav class="menu" id="menu" hidden aria-label="Menu"><button id="mPerfil">O meu perfil</button><button id="mTelemovel">Continuar no telemóvel</button><a href="../sugestoes.html?pagina=app">Enviar sugestões</a><button id="mSair">Sair</button></nav>' +
+      '<nav class="menu" id="menu" hidden aria-label="Menu"><button id="mPerfil">O meu perfil</button>' + (toque() ? '' : '<button id="mTelemovel">Continuar no telemóvel</button>') + '<a href="../sugestoes.html?pagina=app">Enviar sugestões</a><button id="mSair">Sair</button></nav>' +
       '<div class="conteudo">' +
       (estado.aviso ? '<p class="msg ' + estado.aviso.tipo + '" role="status">' + esc(estado.aviso.texto) + '</p>' : '') +
       (!toque() ? '<div class="cinza"><strong style="color:var(--obsidian)">Está no computador.</strong><span>Para fotografar talões, passe a sessão para o telemóvel com um código QR.</span><button class="btn btn-lima" id="bTelemovel">Continuar no telemóvel</button></div>' : '') +
