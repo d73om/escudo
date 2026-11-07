@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sugestões · escudo</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-family:Inter;font-weight:400;font-display:swap;src:url(fontes/inter-400.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;font-display:swap;src:url(fontes/inter-500.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;font-display:swap;src:url(fontes/inter-600.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:700;font-display:swap;src:url(fontes/inter-700.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:900;font-display:swap;src:url(fontes/inter-900.woff2) format("woff2")}
+:root{--forest:#163300;--lime:#9fe870;--spruce:#054d28;--linen:#e2f6d5;--charcoal:#454745;--obsidian:#0e0f0c;--pebble:#868685;--slate:#6a6c6a;--fog:#e8ebe6;--paper:#fff}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--charcoal);font-family:Inter,system-ui,sans-serif;font-feature-settings:"calt"}
+a{color:var(--forest)}
+header{border-bottom:1px solid var(--fog)}
+header div{max-width:720px;margin:0 auto;padding:0 16px;min-height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:28px;font-weight:900;letter-spacing:-.04em;color:var(--forest);text-decoration:none}
+main{max-width:720px;margin:0 auto;padding:48px 16px 80px}
+h1{margin:0 0 16px;font-size:clamp(44px,8vw,80px);line-height:.88;font-weight:900;letter-spacing:-.04em;color:var(--obsidian)}
+.lead{margin:0 0 32px;font-size:19px;line-height:1.5}
+form{background:var(--fog);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:20px}
+fieldset{border:none;margin:0;padding:0}
+legend,.label{font-size:15px;font-weight:600;color:var(--obsidian);margin-bottom:10px;padding:0}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pills input{position:absolute;opacity:0;width:1px;height:1px}
+.pills label{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:9999px;border:1px solid var(--pebble);background:var(--paper);font-size:15px;font-weight:500;cursor:pointer}
+.pills input:checked + label{background:var(--forest);border-color:var(--forest);color:var(--paper)}
+.pills input:focus-visible + label{outline:2px solid var(--forest);outline-offset:2px}
+.field{display:flex;flex-direction:column;gap:8px;font-size:15px;font-weight:600;color:var(--obsidian)}
+.field textarea,.field input,.field select{width:100%;padding:12px 16px;border:1px solid var(--pebble);border-radius:10px;background:var(--paper);font:400 16px Inter,sans-serif;color:var(--obsidian)}
+.field textarea{min-height:160px;resize:vertical;line-height:1.5}
+.field textarea:focus,.field input:focus,.field select:focus{outline:none;border-color:var(--forest)}
+.opt{font-weight:400;color:var(--slate)}
+.count{align-self:flex-end;font-size:13px;font-weight:400;color:var(--slate)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45}
+.check input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--forest);flex-shrink:0}
+.hp{position:absolute;left:-9999px}
+.btn{align-self:flex-start;display:inline-flex;align-items:center;justify-content:center;padding:14px 28px;border-radius:9999px;border:none;background:var(--lime);color:var(--forest);font:600 17px Inter,sans-serif;cursor:pointer}
+.btn[disabled]{opacity:.6;cursor:default}
+.msg{margin:0;padding:14px 16px;border-radius:10px;font-size:15px;line-height:1.45}
+.msg.ok{background:var(--forest);color:var(--paper)}
+.msg.ok strong{color:var(--lime)}
+.msg.ok button{margin-left:6px;background:none;border:none;color:var(--lime);font:600 15px Inter,sans-serif;text-decoration:underline;cursor:pointer;padding:0}
+.msg.err{background:#fbe5e6;color:#a3161d}
+.note{margin:20px 0 0;font-size:14px;color:var(--slate)}
+</style>
+</head>
+<body>
+<header><div><a class="logo" href="index.html">escudo.</a><a href="index.html">Voltar</a></div></header>
+<main>
+  <h1>Diga-nos o que falta.</h1>
+  <p class="lead">Está a testar a app connosco? Cada ideia, falha ou "isto devia fazer…" chega diretamente a quem a está a construir. Lemos todas as mensagens.</p>
+
+  <form id="form" novalidate aria-label="Enviar sugestão">
+    <fieldset>
+      <legend>O que nos quer dizer?</legend>
+      <div class="pills">
+        <input type="radio" name="tipo" id="t1" value="sugestao" checked><label for="t1">Tenho uma ideia</label>
+        <input type="radio" name="tipo" id="t2" value="falta"><label for="t2">Falta-me isto</label>
+        <input type="radio" name="tipo" id="t3" value="problema"><label for="t3">Algo não funciona</label>
+        <input type="radio" name="tipo" id="t4" value="outro"><label for="t4">Outro</label>
+      </div>
+    </fieldset>
+
+    <label class="field">A sua mensagem
+      <textarea id="mensagem" maxlength="2000" required placeholder="Ex.: Gostava de ver quanto gasto em cada supermercado, para comparar."></textarea>
+      <span class="count" id="count" aria-live="polite">0 / 2000</span>
+    </label>
+
+    <label class="field">Para que usa a app? <span class="opt">(opcional)</span>
+      <select id="perfil">
+        <option value="">Escolher…</option>
+        <option value="particular">Só para a casa (particular)</option>
+        <option value="independente_simplificado">Casa e trabalho independente (recibos verdes)</option>
+        <option value="eni_contabilidade_organizada">Casa e empresa em nome individual, com contabilidade organizada</option>
+        <option value="sociedade">Casa e uma empresa (sociedade)</option>
+      </select>
+    </label>
+
+    <label class="check"><input type="checkbox" id="contactar"> Quero resposta: autorizo que me contactem por email sobre esta mensagem.</label>
+    <label class="field" id="campoEmail" hidden>O seu email
+      <input type="email" id="email" autocomplete="email" maxlength="254" placeholder="nome@exemplo.pt">
+    </label>
+
+    <label class="hp" aria-hidden="true">Não preencher <input id="website" type="text" tabindex="-1" autocomplete="off"></label>
+
+    <button class="btn" type="submit" id="enviar">Enviar</button>
+    <p id="msg" class="msg" role="status" aria-live="polite" hidden></p>
+  </form>
+  <p class="note">Sem email, a mensagem é anónima. Saiba como tratamos os dados no <a href="privacidade.html">aviso de privacidade</a>.</p>
+</main>
+
+<script>
+(function () {
+  var URL_API = 'https://wviluzhxzxlnoyiubkgg.supabase.co/rest/v1/sugestoes';
+  var CHAVE = 'sb_publishable_1zpU5ThxRiaCvQeI95HBmw_uHxWhIW_';
+  var form = document.getElementById('form');
+  var msg = document.getElementById('msg');
+  var botao = document.getElementById('enviar');
+  var texto = document.getElementById('mensagem');
+  var contactar = document.getElementById('contactar');
+  var campoEmail = document.getElementById('campoEmail');
+  var email = document.getElementById('email');
+
+  texto.addEventListener('input', function () {
+    document.getElementById('count').textContent = texto.value.length + ' / 2000';
+  });
+  contactar.addEventListener('change', function () {
+    campoEmail.hidden = !contactar.checked;
+    if (contactar.checked) email.focus();
+  });
+
+  function mostrar(html, tipo) { msg.hidden = false; msg.className = 'msg ' + tipo; msg.innerHTML = html; }
+
+  function limpar() {
+    form.reset(); campoEmail.hidden = true; msg.hidden = true;
+    document.getElementById('count').textContent = '0 / 2000';
+    texto.focus();
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (document.getElementById('website').value) { mostrar('<strong>Obrigado!</strong>', 'ok'); return; }
+    var m = texto.value.trim();
+    if (m.length < 3) { mostrar('Escreva a sua mensagem antes de enviar.', 'err'); texto.focus(); return; }
+    var querResposta = contactar.checked;
+    var e = email.value.trim();
+    if (querResposta && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { mostrar('Para lhe respondermos, confirme o seu email.', 'err'); email.focus(); return; }
+
+    var dados = {
+      tipo: form.querySelector('input[name="tipo"]:checked').value,
+      mensagem: m,
+      email: querResposta ? e : null,
+      pode_contactar: querResposta,
+      perfil: document.getElementById('perfil').value || null,
+      pagina: (new URLSearchParams(location.search).get('pagina') || 'site').slice(0, 200)
+    };
+
+    botao.disabled = true; botao.textContent = 'A enviar…';
+    fetch(URL_API, {
+      method: 'POST',
+      headers: { apikey: CHAVE, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(dados)
+    }).then(function (r) {
+      if (r.status !== 201) throw new Error('estado ' + r.status);
+      form.reset(); campoEmail.hidden = true;
+      document.getElementById('count').textContent = '0 / 2000';
+      mostrar('<strong>Obrigado!</strong> A sua mensagem chegou.<button type="button" id="outra">Enviar outra</button>', 'ok');
+      document.getElementById('outra').addEventListener('click', limpar);
+    }).catch(function () {
+      mostrar('Não conseguimos enviar agora. Tente de novo daqui a pouco.', 'err');
+    }).then(function () {
+      botao.disabled = false; botao.textContent = 'Enviar';
+    });
+  });
+})();
+</script>
+</body>
+</html>

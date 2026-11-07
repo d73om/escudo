@@ -102,6 +102,15 @@ footer small{font-size:14px;color:var(--linen)}
         <label class="field">O seu email
           <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="nome@exemplo.pt">
         </label>
+        <label class="field">Para que vai usar a app? <span class="opt">(opcional)</span>
+          <select id="perfil" name="perfil">
+            <option value="">Escolher…</option>
+            <option value="particular">Só para a casa (particular)</option>
+            <option value="independente_simplificado">Casa e trabalho independente (recibos verdes)</option>
+            <option value="eni_contabilidade_organizada">Casa e empresa em nome individual, com contabilidade organizada</option>
+            <option value="sociedade">Casa e uma empresa (sociedade)</option>
+          </select>
+        </label>
         <div class="row">
           <label class="field">Banco principal <span class="opt">(opcional)</span>
             <select id="banco" name="banco">
@@ -215,6 +224,7 @@ footer small{font-size:14px;color:var(--linen)}
     <details><summary>Quando fica disponível?</summary><p>Estamos a testar com um grupo pequeno de famílias e contamos abrir no início de 2027. Quem está na lista é avisado primeiro e pode ser convidado para os testes.</p></details>
     <details><summary>Quanto vai custar?</summary><p>Vai haver uma versão gratuita. Os detalhes do plano pago ainda estão a ser definidos e quem está na lista sabe antes de todos.</p></details>
     <details><summary>Lê qualquer talão?</summary><p>O objetivo é ler faturas impressas dos principais supermercados portugueses. Quando não tiver a certeza sobre um artigo, pergunta-lhe e aprende com a resposta.</p></details>
+    <details><summary>Tenho atividade por conta própria. Serve-me?</summary><p>Estamos a preparar uma versão para trabalhadores independentes e empresários em nome individual, incluindo com contabilidade organizada. A ideia é separar as despesas da atividade das da casa, guardar as faturas com o NIF certo e enviá-las ao seu contabilista sem papelada. Indique o seu caso ao inscrever-se: ajuda-nos a decidir o que construir primeiro.</p></details>
     <details><summary>Para que servem as perguntas sobre o banco e a casa?</summary><p>São opcionais. Ajudam-nos a decidir que bancos ligar primeiro e a perceber que famílias estão interessadas.</p></details>
   </section>
 
@@ -227,8 +237,8 @@ footer small{font-size:14px;color:var(--linen)}
 <footer>
   <div class="wrap">
     <span class="logo">escudo.</span>
-    <a href="privacidade.html">Aviso de privacidade</a>
-    <small>© 2026 [NOME DO RESPONSÁVEL]</small>
+    <span style="display:flex;gap:20px;flex-wrap:wrap"><a href="sugestoes.html">Enviar sugestões</a><a href="privacidade.html">Aviso de privacidade</a></span>
+    <small>© 2026 Diogo Oliveira Martins</small>
   </div>
 </footer>
 
@@ -266,6 +276,7 @@ footer small{font-size:14px;color:var(--linen)}
       email: email,
       banco: document.getElementById('banco').value || null,
       pessoas_em_casa: pessoas ? parseInt(pessoas, 10) : null,
+      perfil: document.getElementById('perfil').value || null,
       consentimento: true,
       origem: origem()
     };
@@ -280,7 +291,7 @@ footer small{font-size:14px;color:var(--linen)}
       if (r.status === 201 || r.status === 409) {
         form.querySelectorAll('input, select, button').forEach(function (el) { el.disabled = true; });
         botao.textContent = 'Inscrito';
-        mostrar('<strong>Está na lista.</strong> Avisamos por email quando a app estiver pronta.', 'ok');
+        mostrar('<strong>Está na lista.</strong> Avisamos por email quando a app estiver pronta. Tem uma ideia? <a href="sugestoes.html" style="color:#9fe870">Conte-nos</a>.', 'ok');
       } else {
         throw new Error('estado ' + r.status);
       }
