@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>escudo · o seu dinheiro, às claras</title>
+<meta name="description" content="Fotografe o talão do supermercado e descubra quanto foi comida, limpeza, higiene e quanto foi para o Estado em IVA. Entre na lista de espera.">
+<style>
+@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(fontes/inter-400.woff2) format("woff2")}
+@font-face{font-family:Inter;font-style:normal;font-weight:500;font-display:swap;src:url(fontes/inter-500.woff2) format("woff2")}
+@font-face{font-family:Inter;font-style:normal;font-weight:600;font-display:swap;src:url(fontes/inter-600.woff2) format("woff2")}
+@font-face{font-family:Inter;font-style:normal;font-weight:700;font-display:swap;src:url(fontes/inter-700.woff2) format("woff2")}
+@font-face{font-family:Inter;font-style:normal;font-weight:900;font-display:swap;src:url(fontes/inter-900.woff2) format("woff2")}
+:root{
+  --forest:#163300;--lime:#9fe870;--spruce:#054d28;--linen:#e2f6d5;--blue:#0b4c72;
+  --charcoal:#454745;--obsidian:#0e0f0c;--pebble:#868685;--slate:#6a6c6a;--fog:#e8ebe6;--paper:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--charcoal);font-family:Inter,system-ui,sans-serif;font-feature-settings:"calt"}
+a{color:var(--forest)}a:hover{color:var(--spruce)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+header{position:sticky;top:0;z-index:2;background:var(--paper);border-bottom:1px solid var(--fog)}
+header .wrap{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:28px;font-weight:900;letter-spacing:-.04em;color:var(--forest);text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 28px;border-radius:9999px;border:none;font:600 17px Inter,sans-serif;text-decoration:none;cursor:pointer}
+.btn-lime{background:var(--lime);color:var(--forest)}
+.btn-outline{background:var(--paper);color:var(--forest);border:1px solid var(--forest);padding:10px 20px;font-weight:500;font-size:16px}
+.tag{display:inline-block;padding:8px 14px;border-radius:9999px;background:var(--linen);color:var(--forest);font-size:13px;font-weight:500}
+.display{margin:0;font-weight:900;letter-spacing:-.04em;line-height:.85;color:var(--obsidian)}
+.hero{padding:72px 16px 0;text-align:center}
+.hero .inner{max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:24px}
+.hero h1{font-size:clamp(52px,9vw,112px);text-transform:uppercase}
+.lead{margin:0;max-width:640px;font-size:clamp(18px,2vw,22px);line-height:1.45}
+.signup{width:100%;max-width:560px;background:var(--fog);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;text-align:left}
+.signup .row{display:flex;flex-wrap:wrap;gap:10px}
+.signup .row > *{flex:1 1 200px}
+.field{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500;color:var(--obsidian)}
+.field input,.field select{width:100%;padding:12px 16px;border:1px solid var(--pebble);border-radius:10px;background:var(--paper);font:400 16px Inter,sans-serif;color:var(--obsidian)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--forest)}
+.opt{font-weight:400;color:var(--slate)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45}
+.consent input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--forest);flex-shrink:0}
+.hp{position:absolute;left:-9999px}
+.msg{margin:0;padding:12px 16px;border-radius:10px;font-size:15px;line-height:1.4}
+.msg.ok{background:var(--forest);color:var(--paper)}
+.msg.ok strong{color:var(--lime)}
+.msg.err{background:#fbe5e6;color:#a3161d}
+.small{margin:0;font-size:14px;color:var(--slate)}
+.show{margin:64px auto 0;max-width:1200px;background:var(--fog);border-radius:28px 28px 0 0;padding:48px 16px 0;display:flex;justify-content:center}
+.card{width:100%;max-width:560px;background:var(--paper);border-radius:28px 28px 0 0;box-shadow:rgba(0,0,0,.08) 0 6px 20px 0;padding:28px;display:flex;flex-direction:column;gap:14px;text-align:left}
+.card .top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:15px;font-weight:600;color:var(--obsidian)}
+.bar{display:flex;height:14px;border-radius:9999px;overflow:hidden;gap:2px}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;font-size:15px}
+.legend span{display:flex;justify-content:space-between}
+.legend strong{color:var(--obsidian)}
+.state{background:var(--forest);border-radius:20px;padding:16px 18px;display:flex;justify-content:space-between;align-items:baseline;color:var(--paper);font-size:14px;margin-bottom:28px}
+.state b{font-size:26px;font-weight:900;letter-spacing:-.03em;color:var(--lime)}
+section.block{padding:96px 16px 72px}
+h2.big{margin:0;font-size:clamp(40px,5.5vw,72px);line-height:.9;font-weight:900;letter-spacing:-.04em;color:var(--obsidian)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:40px 32px;margin-top:56px}
+.grid h3{margin:20px 0 10px;font-size:20px;font-weight:700;color:var(--obsidian)}
+.grid p{margin:0;font-size:16px;line-height:1.5}
+.dark{max-width:1200px;margin:0 auto;background:var(--forest);border-radius:28px;padding:clamp(32px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px;align-items:center}
+.dark h2{margin:0 0 20px;font-size:clamp(40px,5.5vw,72px);line-height:.9;font-weight:900;letter-spacing:-.04em;color:var(--lime)}
+.dark p{margin:0;font-size:18px;line-height:1.5;color:var(--paper)}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.checks li{background:var(--paper);border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:center;font-size:16px;font-weight:500;color:var(--obsidian)}
+.checks li span{width:32px;height:32px;border-radius:9999px;background:var(--linen);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.faq{max-width:800px;margin:0 auto;padding:96px 16px;display:flex;flex-direction:column;gap:8px}
+.faq h2{margin:0 0 24px;font-size:clamp(32px,4vw,45px);line-height:1.05;font-weight:700;letter-spacing:-.02em;color:var(--obsidian)}
+details{border-radius:10px;background:var(--fog);padding:18px 20px}
+summary{cursor:pointer;list-style:none;font-size:17px;font-weight:600;color:var(--obsidian)}
+summary::-webkit-details-marker{display:none}
+details p{margin:12px 0 0;font-size:16px;line-height:1.5}
+.final{background:var(--linen);padding:80px 16px;text-align:center}
+.final h2{margin:0 0 28px;font-size:clamp(44px,7vw,96px);line-height:.85;font-weight:900;letter-spacing:-.04em;text-transform:uppercase;color:var(--forest)}
+.final .btn{background:var(--forest);color:var(--lime)}
+footer{background:var(--forest);padding:40px 16px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
+footer a{color:var(--paper);font-size:15px}
+footer .logo{color:var(--lime)}
+footer small{font-size:14px;color:var(--linen)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="#">escudo.</a>
+    <a class="btn btn-outline" href="#lista">Entrar na lista</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="titulo">
+    <div class="inner">
+      <span class="tag">Finanças pessoais, feitas para Portugal</span>
+      <h1 id="titulo" class="display">O seu dinheiro.<br>Às claras.</h1>
+      <p class="lead">Fotografe o talão do supermercado e descubra quanto foi comida, limpeza, higiene e quanto foi para o Estado em IVA. Depois, junte os seus bancos e veja para onde vai cada euro.</p>
+
+      <form id="lista" class="signup" novalidate aria-label="Lista de espera">
+        <label class="field">O seu email
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="nome@exemplo.pt">
+        </label>
+        <div class="row">
+          <label class="field">Banco principal <span class="opt">(opcional)</span>
+            <select id="banco" name="banco">
+              <option value="">Escolher…</option>
+              <option>Caixa Geral de Depósitos</option>
+              <option>Millennium BCP</option>
+              <option>Santander</option>
+              <option>Novo Banco</option>
+              <option>BPI</option>
+              <option>Crédito Agrícola</option>
+              <option>Montepio</option>
+              <option>ActivoBank</option>
+              <option>Revolut</option>
+              <option>Outro</option>
+            </select>
+          </label>
+          <label class="field">Pessoas em casa <span class="opt">(opcional)</span>
+            <select id="pessoas" name="pessoas">
+              <option value="">Escolher…</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6 ou mais</option>
+            </select>
+          </label>
+        </div>
+        <label class="hp" aria-hidden="true">Não preencher <input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+        <label class="consent">
+          <input id="consentimento" name="consentimento" type="checkbox" required>
+          <span>Aceito receber um email quando a app estiver pronta e, se quiser, um convite para a testar. Li o <a href="privacidade.html">aviso de privacidade</a>.</span>
+        </label>
+        <button class="btn btn-lime" type="submit" id="enviar">Entrar na lista de espera</button>
+        <p id="msg" class="msg" role="status" aria-live="polite" hidden></p>
+      </form>
+      <p class="small">Lançamento no início de 2027 · sem spam, pode sair quando quiser</p>
+    </div>
+
+    <div class="show" aria-hidden="true">
+      <div class="card">
+        <div class="top"><span>Talão do supermercado</span><span class="tag">12 artigos</span></div>
+        <span class="display" style="font-size:48px;line-height:1">87,34 €</span>
+        <div class="bar"><span style="width:73.5%;background:#163300"></span><span style="width:11.3%;background:#0b4c72"></span><span style="width:9.7%;background:#9fe870"></span><span style="width:5.5%;background:#c8cbc6"></span></div>
+        <div class="legend">
+          <span><span>Alimentação</span><strong>64,20 €</strong></span>
+          <span><span>Limpeza</span><strong>9,87 €</strong></span>
+          <span><span>Higiene</span><strong>8,48 €</strong></span>
+          <span><span>Outros</span><strong>4,79 €</strong></span>
+        </div>
+        <div class="state"><span>Para o Estado em IVA</span><b>7,96 €</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="func">
+    <div class="wrap">
+      <h2 id="func" class="big" style="max-width:780px">Sabe sempre quanto pode gastar. Sem folhas de Excel.</h2>
+      <div class="grid">
+        <div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <h3>Fotografe o talão</h3>
+          <p>A app lê cada linha da fatura e arruma-a por tipo: comida, limpeza, higiene, bebé, animais.</p>
+        </div>
+        <div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10 12 4l9 6"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8M3 20h18"/></svg>
+          <h3>Quanto vai para o Estado</h3>
+          <p>Cada talão mostra o IVA que pagou. No fim do ano, sabe quanto entregou ao Estado nas compras.</p>
+        </div>
+        <div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>
+          <h3>Orçamentos que avisam</h3>
+          <p>Defina quanto quer gastar por categoria e receba um aviso aos 80%, antes de ser tarde.</p>
+        </div>
+        <div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/></svg>
+          <h3>IRS sem surpresas</h3>
+          <p>Gastos de saúde, educação e habitação arrumados como no e-Fatura, para conferir antes do prazo.</p>
+        </div>
+        <div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg>
+          <h3>Todos os bancos num sítio</h3>
+          <p>Em breve: ordenado, débitos diretos e compras com cartão a entrar sozinhos, já categorizados.</p>
+        </div>
+        <div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          <h3>Objetivos de poupança</h3>
+          <p>Férias, carro, fundo de emergência. Veja se lá chega ao ritmo atual.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:0 16px" aria-labelledby="seg">
+    <div class="dark">
+      <div>
+        <h2 id="seg">Os seus dados, só seus.</h2>
+        <p>Construída com cuidado desde o primeiro dia. Quando os bancos chegarem, a ligação segue as regras europeias de open banking: autoriza no seu banco e revoga quando quiser.</p>
+      </div>
+      <ul class="checks">
+        <li><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>Só leitura: a app nunca move dinheiro</li>
+        <li><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>Os códigos do banco nunca passam por nós</li>
+        <li><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>Dados guardados na União Europeia</li>
+        <li><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#163300" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>O seu email nunca é vendido nem partilhado</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="perg">
+    <h2 id="perg">Perguntas frequentes</h2>
+    <details><summary>Quando fica disponível?</summary><p>Estamos a testar com um grupo pequeno de famílias e contamos abrir no início de 2027. Quem está na lista é avisado primeiro e pode ser convidado para os testes.</p></details>
+    <details><summary>Quanto vai custar?</summary><p>Vai haver uma versão gratuita. Os detalhes do plano pago ainda estão a ser definidos e quem está na lista sabe antes de todos.</p></details>
+    <details><summary>Lê qualquer talão?</summary><p>O objetivo é ler faturas impressas dos principais supermercados portugueses. Quando não tiver a certeza sobre um artigo, pergunta-lhe e aprende com a resposta.</p></details>
+    <details><summary>Para que servem as perguntas sobre o banco e a casa?</summary><p>São opcionais. Ajudam-nos a decidir que bancos ligar primeiro e a perceber que famílias estão interessadas.</p></details>
+  </section>
+
+  <section class="final" aria-labelledby="fim">
+    <h2 id="fim">Comece 2027<br>com as contas certas.</h2>
+    <a class="btn" href="#lista">Entrar na lista de espera</a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="logo">escudo.</span>
+    <a href="privacidade.html">Aviso de privacidade</a>
+    <small>© 2026 [NOME DO RESPONSÁVEL]</small>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var URL_API = 'https://wviluzhxzxlnoyiubkgg.supabase.co/rest/v1/lista_espera';
+  var CHAVE = 'sb_publishable_1zpU5ThxRiaCvQeI95HBmw_uHxWhIW_';
+  var form = document.getElementById('lista');
+  var msg = document.getElementById('msg');
+  var botao = document.getElementById('enviar');
+
+  function mostrar(texto, tipo) {
+    msg.hidden = false;
+    msg.className = 'msg ' + tipo;
+    msg.innerHTML = texto;
+  }
+
+  function origem() {
+    try {
+      var p = new URLSearchParams(location.search);
+      return (p.get('utm_source') || p.get('origem') || document.referrer.split('/')[2] || 'direto').slice(0, 100);
+    } catch (e) { return 'direto'; }
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var consent = document.getElementById('consentimento').checked;
+    if (document.getElementById('website').value) { mostrar('<strong>Está na lista.</strong> Obrigado!', 'ok'); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { mostrar('Confirme o seu email, parece ter um erro.', 'err'); document.getElementById('email').focus(); return; }
+    if (!consent) { mostrar('Para entrar na lista, precisa de aceitar receber o nosso email.', 'err'); return; }
+
+    var pessoas = document.getElementById('pessoas').value;
+    var dados = {
+      email: email,
+      banco: document.getElementById('banco').value || null,
+      pessoas_em_casa: pessoas ? parseInt(pessoas, 10) : null,
+      consentimento: true,
+      origem: origem()
+    };
+
+    botao.disabled = true;
+    botao.textContent = 'A enviar…';
+    fetch(URL_API, {
+      method: 'POST',
+      headers: { apikey: CHAVE, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(dados)
+    }).then(function (r) {
+      if (r.status === 201 || r.status === 409) {
+        form.querySelectorAll('input, select, button').forEach(function (el) { el.disabled = true; });
+        botao.textContent = 'Inscrito';
+        mostrar('<strong>Está na lista.</strong> Avisamos por email quando a app estiver pronta.', 'ok');
+      } else {
+        throw new Error('estado ' + r.status);
+      }
+    }).catch(function () {
+      botao.disabled = false;
+      botao.textContent = 'Entrar na lista de espera';
+      mostrar('Não conseguimos guardar agora. Tente de novo daqui a pouco.', 'err');
+    });
+  });
+})();
+</script>
+</body>
+</html>
